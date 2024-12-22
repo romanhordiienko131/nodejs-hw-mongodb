@@ -11,6 +11,7 @@ tags:
     description: Operations with contacts
 servers:
   - url: https://contacts-app-l1ub.onrender.com
+  - url: http://localhost:3000
 paths:
   /contacts:
     get:

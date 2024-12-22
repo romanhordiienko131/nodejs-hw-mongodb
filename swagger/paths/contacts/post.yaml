@@ -7,7 +7,7 @@ security:
   - bearerAuth: []
 requestBody:
   content:
-    multipart/formdata:
+    multipart/form-data:
       schema:
         type: object
         required:
@@ -42,7 +42,6 @@ requestBody:
             description: Contact's photo
             type: string
             format: binary
-            default: null
 responses:
   '201':
     description: Successfully created a contact

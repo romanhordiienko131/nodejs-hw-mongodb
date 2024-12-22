@@ -12,6 +12,9 @@
   "servers": [
     {
       "url": "https://contacts-app-l1ub.onrender.com"
+    },
+    {
+      "url": "http://localhost:3000"
     }
   ],
   "tags": [
@@ -161,7 +164,7 @@
         ],
         "requestBody": {
           "content": {
-            "multipart/formdata": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "required": [
@@ -205,8 +208,7 @@
                   "photo": {
                     "description": "Contact's photo",
                     "type": "string",
-                    "format": "binary",
-                    "default": null
+                    "format": "binary"
                   }
                 }
               }
@@ -371,7 +373,7 @@
         ],
         "requestBody": {
           "content": {
-            "multipart/formdata": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "properties": {
