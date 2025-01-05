@@ -1,8 +1,8 @@
 tags:
   - Contacts
 operationId: createContact
-summary: Create contact
-description: Create a contact with payload
+summary: Create a New Contact
+description: Creates a new contact using the provided details. Returns a 201 status with the created contact information on success, or a 401 status for unauthorized access.
 security:
   - bearerAuth: []
 requestBody:
@@ -27,7 +27,6 @@ requestBody:
             description: Contact's email
             type: string
             example: johndoe@email.com
-            default: null
           isFavourite:
             description: Whether the contact is favourite
             type: boolean

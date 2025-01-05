@@ -1,8 +1,8 @@
 tags:
   - Contacts
 operationId: patchContact
-summary: Patch contact
-description: Patch contact
+summary: Update a Contact
+description: Updates the details of a contact identified by its unique identifier. Returns a 200 status with the updated contact information on success, or appropriate error responses for unauthorized access or if the contact is not found
 security:
   - bearerAuth: []
 parameters:
@@ -45,7 +45,7 @@ requestBody:
             format: binary
 responses:
   '200':
-    description: Successfully patched a contact
+    description: Successfully updated a contact
     content:
       application/json:
         schema:
@@ -67,4 +67,4 @@ responses:
   '401':
     $ref: ../../../components/responses/401.yaml
   '404':
-    $ref: ../../../components/responses/404.yaml
+    $ref: ../../../components/responses/contacts404.yaml

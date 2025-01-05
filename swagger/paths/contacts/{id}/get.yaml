@@ -1,8 +1,8 @@
 tags:
   - Contacts
 operationId: getContact
-summary: Get contact
-description: Get contact by id
+summary: Retrieve a Contact
+description: Fetches a contact by its unique identifier. Returns a 200 status with the contact details on success, or appropriate error responses for unauthorized access or if the contact is not found.
 security:
   - bearerAuth: []
 parameters:
@@ -36,4 +36,4 @@ responses:
   '401':
     $ref: ../../../components/responses/401.yaml
   '404':
-    $ref: ../../../components/responses/404.yaml
+    $ref: ../../../components/responses/contacts404.yaml

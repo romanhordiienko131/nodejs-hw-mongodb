@@ -39,6 +39,6 @@ properties:
     example: https://res.cloudinary.com/dha4xvgfi/image/upload/v1734084867/u1bs6msdau92vecbfhck.jpg
     default: null
   userId:
-    description: Contacts' owner id
+    description: Contact's owner id
     type: string
     example: 675984213f7566a56371b05c

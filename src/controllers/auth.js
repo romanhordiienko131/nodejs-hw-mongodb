@@ -9,7 +9,13 @@ import {
 } from '../services/auth.js';
 
 export const registerUserController = async (req, res) => {
-  const user = await registerUser(req.body);
+  const payload = {
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+  };
+
+  const user = await registerUser(payload);
 
   res.status(201).json({
     status: 201,
@@ -30,13 +36,18 @@ const setupSession = (res, session) => {
 };
 
 export const loginUserController = async (req, res) => {
-  const session = await loginUser(req.body);
+  const payload = {
+    email: req.body.email,
+    password: req.body.password,
+  };
+
+  const session = await loginUser(payload);
 
   setupSession(res, session);
 
   res.status(200).json({
     status: 200,
-    message: 'Successfully logged in an user!',
+    message: 'Successfully logged in a user!',
     data: {
       accessToken: session.accessToken,
     },
@@ -44,10 +55,12 @@ export const loginUserController = async (req, res) => {
 };
 
 export const refreshUsersSessionController = async (req, res) => {
-  const session = await refreshUsersSession({
+  const payload = {
     sessionId: req.cookies.sessionId,
     refreshToken: req.cookies.refreshToken,
-  });
+  };
+
+  const session = await refreshUsersSession(payload);
 
   setupSession(res, session);
 
@@ -61,7 +74,11 @@ export const refreshUsersSessionController = async (req, res) => {
 };
 
 export const logoutUserController = async (req, res) => {
-  if (req.cookies.sessionId) await logoutUser(req.cookies.sessionId);
+  const sessionId = req.cookies.sessionId;
+
+  if (sessionId) {
+    await logoutUser(sessionId);
+  }
 
   res.clearCookie('sessionId');
   res.clearCookie('refreshToken');
@@ -70,7 +87,9 @@ export const logoutUserController = async (req, res) => {
 };
 
 export const sendResetEmailController = async (req, res) => {
-  await sendResetEmail(req.body.email);
+  const email = req.body.email;
+
+  await sendResetEmail(email);
 
   res.status(200).json({
     status: 200,
@@ -80,7 +99,12 @@ export const sendResetEmailController = async (req, res) => {
 };
 
 export const resetPasswordController = async (req, res) => {
-  await resetPassword(req.body);
+  const payload = {
+    token: req.body.token,
+    password: req.body.password,
+  };
+
+  await resetPassword(payload);
 
   res.clearCookie('sessionId');
   res.clearCookie('refreshToken');

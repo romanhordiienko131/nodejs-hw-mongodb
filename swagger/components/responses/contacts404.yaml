@@ -1,4 +1,4 @@
-description: Not found error
+description: Contact not found
 content:
   application/json:
     schema:

@@ -9,9 +9,10 @@ info:
 tags:
   - name: Contacts
     description: Operations with contacts
+  - name: Auth
+    description: Operations with user
 servers:
   - url: https://contacts-app-l1ub.onrender.com
-  - url: http://localhost:3000
 paths:
   /contacts:
     get:
@@ -25,6 +26,24 @@ paths:
       $ref: ../swagger/paths/contacts/{id}/delete.yaml
     patch:
       $ref: ../swagger/paths/contacts/{id}/patch.yaml
+  /auth/register:
+    post:
+      $ref: ../swagger/paths/auth/register/post.yaml
+  /auth/login:
+    post:
+      $ref: ../swagger/paths/auth/login/post.yaml
+  /auth/logout:
+    post:
+      $ref: ../swagger/paths/auth/logout/post.yaml
+  /auth/refresh:
+    post:
+      $ref: ../swagger/paths/auth/refresh/post.yaml
+  /auth/send-reset-email:
+    post:
+      $ref: ../swagger/paths/auth/send-reset-email/post.yaml
+  /auth/reset-pwd:
+    post:
+      $ref: ../swagger/paths/auth/reset-pwd/post.yaml
 components:
   securitySchemes:
     bearerAuth:

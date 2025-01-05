@@ -1,8 +1,8 @@
 tags:
   - Contacts
 operationId: deleteContact
-summary: Delete contact
-description: Delete contact
+summary: Delete a Contact
+description: Removes a contact using its unique identifier. Returns a 204 status on success, or appropriate error responses for unauthorized access or non-existent contacts.
 security:
   - bearerAuth: []
 parameters:
@@ -18,4 +18,4 @@ responses:
   '401':
     $ref: ../../../components/responses/401.yaml
   '404':
-    $ref: ../../../components/responses/404.yaml
+    $ref: ../../../components/responses/contacts404.yaml

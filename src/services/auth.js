@@ -5,9 +5,6 @@ import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import handlebars from 'handlebars';
-
-import { UsersCollection } from '../db/models/user.js';
-import { SessionsCollection } from '../db/models/session.js';
 import {
   ONE_DAY,
   ONE_MINUTE,
@@ -16,15 +13,21 @@ import {
 } from '../constants/index.js';
 import { env } from '../utils/env.js';
 import { sendEmail } from '../utils/sendMail.js';
+import { UsersCollection } from '../db/models/user.js';
+import { SessionsCollection } from '../db/models/session.js';
 
-export const registerUser = async (payload) => {
-  const user = await UsersCollection.findOne({ email: payload.email });
-  if (user) throw createHttpError(409, 'Email in use');
+export const registerUser = async ({ name, email, password }) => {
+  const user = await UsersCollection.findOne({ email });
 
-  const hashedPassword = await bcrypt.hash(payload.password, 10);
+  if (user) {
+    throw createHttpError(409, 'Email in use');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   return await UsersCollection.create({
-    ...payload,
+    name,
+    email,
     password: hashedPassword,
   });
 };
@@ -44,16 +47,22 @@ const createSession = () => {
   };
 };
 
-export const loginUser = async (payload) => {
-  const user = await UsersCollection.findOne({ email: payload.email });
-  if (!user) throw createHttpError(401, 'Email or password is incorrect');
+export const loginUser = async ({ email, password }) => {
+  const user = await UsersCollection.findOne({ email });
 
-  const isEqual = await bcrypt.compare(payload.password, user.password);
-  if (!isEqual) throw createHttpError(401, 'Email or password is incorrect');
+  if (!user) {
+    throw createHttpError(401, 'Email or password is incorrect');
+  }
 
-  await SessionsCollection.deleteOne({ userId: user._id });
+  const isEqual = await bcrypt.compare(password, user.password);
+
+  if (!isEqual) {
+    throw createHttpError(401, 'Email or password is incorrect');
+  }
 
   const session = createSession();
+
+  await SessionsCollection.deleteOne({ userId: user._id });
 
   return await SessionsCollection.create({
     userId: user._id,
@@ -67,20 +76,23 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
     refreshToken,
   });
 
-  if (!session) throw createHttpError(401, 'Session not found');
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
+  }
 
   const isSessionTokenExpired =
     Date.now() > new Date(session.refreshTokenValidUntil);
 
-  if (isSessionTokenExpired)
+  if (isSessionTokenExpired) {
     throw createHttpError(401, 'Session token expired');
+  }
+
+  const newSession = createSession();
 
   await SessionsCollection.deleteOne({
     _id: sessionId,
     refreshToken,
   });
-
-  const newSession = createSession();
 
   return await SessionsCollection.create({
     userId: session.userId,
@@ -94,7 +106,10 @@ export const logoutUser = async (sessionId) => {
 
 export const sendResetEmail = async (email) => {
   const user = await UsersCollection.findOne({ email });
-  if (!user) throw createHttpError(404, 'User not found!');
+
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
 
   const resetToken = jwt.sign(
     {
@@ -137,14 +152,15 @@ export const sendResetEmail = async (email) => {
   }
 };
 
-export const resetPassword = async (payload) => {
+export const resetPassword = async ({ token, password }) => {
   let entries;
 
   try {
-    entries = jwt.verify(payload.token, env('JWT_SECRET'));
+    entries = jwt.verify(token, env('JWT_SECRET'));
   } catch (err) {
-    if (err instanceof Error)
+    if (err instanceof Error) {
       throw createHttpError(401, 'Token is expired or invalid.');
+    }
     throw err;
   }
 
@@ -152,9 +168,12 @@ export const resetPassword = async (payload) => {
     _id: entries.sub,
     email: entries.email,
   });
-  if (!user) throw createHttpError(404, 'User not found!');
 
-  const hashedPassword = await bcrypt.hash(payload.password, 10);
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   await UsersCollection.updateOne(
     {

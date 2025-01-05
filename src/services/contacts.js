@@ -1,12 +1,12 @@
 import { SORT_ORDER } from '../constants/index.js';
-import { ContactsCollection } from '../db/models/contact.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
+import { ContactsCollection } from '../db/models/contact.js';
 
 export const getAllContacts = async ({
   page = 1,
   perPage = 10,
-  sortBy = SORT_ORDER.ASC,
-  sortOrder = '_id',
+  sortBy = '_id',
+  sortOrder = SORT_ORDER.ASC,
   userId,
 }) => {
   const limit = perPage;
@@ -44,8 +44,8 @@ export const createContact = async (payload) => {
 
 export const updateContact = async (
   contactId,
-  payload,
   userId,
+  payload,
   options = {},
 ) => {
   const rawResult = await ContactsCollection.findOneAndUpdate(
